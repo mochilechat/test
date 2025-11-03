@@ -138,9 +138,31 @@ def compare_sheets(sheet_a, sheet_b, progress_bar=None):
             progress_bar.update(1)
 
 
+def resolve_workbooks():
+    """Resolve workbook paths from CLI arguments or the file dialog."""
+
+    args = sys.argv[1:]
+    if not args:
+        file_a = select_file("选择文档A (Vn+1)")
+        file_b = select_file("选择文档B (Vn)")
+        return file_a, file_b
+
+    if len(args) != 2:
+        raise SystemExit("Usage: python compare_excel.py [file_a file_b]")
+
+    file_a = Path(args[0])
+    file_b = Path(args[1])
+
+    if not file_a.exists():
+        raise SystemExit(f"文件不存在: {file_a}")
+    if not file_b.exists():
+        raise SystemExit(f"文件不存在: {file_b}")
+
+    return file_a, file_b
+
+
 def main():
-    file_a = select_file("选择文档A (Vn+1)")
-    file_b = select_file("选择文档B (Vn)")
+    file_a, file_b = resolve_workbooks()
 
     wb_a = load_workbook(filename=file_a)
     wb_b = load_workbook(filename=file_b)
